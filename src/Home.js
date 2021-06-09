@@ -65,7 +65,7 @@ export default function Home(props) {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
   useEffect(() => {
-    axios.get('/users')
+    axios.get('http://127.0.0.1:3000/users')
       .then(function (response) {
         // handle success
         setUsers(response.data)
