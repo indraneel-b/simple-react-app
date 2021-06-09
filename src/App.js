@@ -5,7 +5,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 import { useState } from 'react';
-import { blue, indigo } from '@material-ui/core/colors';
+import { blue, indigo, amber } from '@material-ui/core/colors';
 
 function App() {
   const [darkState, setDarkState] = useState(false);
@@ -14,7 +14,7 @@ function App() {
     palette: {
       type: palletType,
       primary: blue,
-      secondary: indigo,
+      secondary: amber,
     },
   });
   function toggleTheme() {

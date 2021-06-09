@@ -21,6 +21,12 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import { red } from '@material-ui/core/colors';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -58,14 +64,65 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  headerContainer: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
 }));
 
 
 export default function Home(props) {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
-  useEffect(() => {
-    axios.get('http://127.0.0.1:3000/users')
+  const [open, setOpen] = React.useState(false);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const createUser = (name, email) => {
+    axios.post('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users', {
+      name,
+      email
+    })
+      .then(function (response) {
+        console.log(response);
+        getUsers();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  const deleteUser = (userObj) => {
+    axios.delete('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users', {data: userObj})
+      .then(function (response) {
+        console.log(response);
+        getUsers();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  const handleSubmit = () => {
+    createUser(name, email);
+    setName('');
+    setEmail('');
+    handleClose();
+  }
+
+  const onDelete = (data) => {
+    deleteUser(data);
+  }
+
+  const getUsers = () => {
+    axios.get('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users')
       .then(function (response) {
         // handle success
         setUsers(response.data)
@@ -73,6 +130,11 @@ export default function Home(props) {
       .catch((err) => {
         console.log(err);
       })
+  }
+
+  //call on mount
+  useEffect(() => {
+    getUsers();
   }, [])
 
   return (
@@ -90,10 +152,11 @@ export default function Home(props) {
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent}>
-          <Container maxWidth="sm">
-            <Typography variant="h4" align="center" color="textSecondary">
+          <Container className={classes.headerContainer}>
+            <Typography variant="h4" align="left" color="textSecondary">
               Users List
             </Typography>
+            <Button variant="contained" color="secondary" onClick={() => handleClickOpen()}>+ Add User</Button>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="lg">
@@ -128,8 +191,8 @@ export default function Home(props) {
                     <Button size="small" color="primary">
                       View
                     </Button>
-                    <Button size="small" color="primary">
-                      Edit
+                    <Button onClick={() => onDelete(user)} size="small" color="primary">
+                      Delete
                     </Button>
                   </CardActions>
                 </Card>
@@ -138,6 +201,38 @@ export default function Home(props) {
           </Grid>
         </Container>
       </main>
+      {/* Dialog */}
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Add User</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Name"
+            type="name"
+            fullWidth
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="email"
+            label="Email Address"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* End Dialog */}
       {/* Footer */}
       <footer className={classes.footer}>
         <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
