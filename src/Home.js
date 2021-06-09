@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import HeaderIcon from '@material-ui/icons/CloudCircle';
@@ -13,6 +13,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
+import axios from 'axios';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import { red } from '@material-ui/core/colors';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -44,13 +52,28 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
   },
+  companyName: {
+    flexGrow: 1
+  },
+  avatar: {
+    backgroundColor: red[500],
+  },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export default function Home() {
-  const 
-  classes = useStyles();
+export default function Home(props) {
+  const classes = useStyles();
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    axios.get('/users')
+      .then(function (response) {
+        // handle success
+        setUsers(response.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }, [])
 
   return (
     <React.Fragment>
@@ -58,37 +81,47 @@ export default function Home() {
       <AppBar position="relative">
         <Toolbar>
           <HeaderIcon className={classes.icon} />
-          <Typography variant="h6" color="inherit" noWrap>
-           FinCloud
+          <Typography className={classes.companyName} variant="h6" color="inherit" noWrap>
+            FinCloud
           </Typography>
+          <FormControlLabel control={<Switch onChange={props.toggleTheme} />} label="Dark Mode" />
         </Toolbar>
       </AppBar>
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
-                Profiles List
+            <Typography variant="h4" align="center" color="textSecondary">
+              Users List
             </Typography>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="lg">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {users.map((user) => (
+              <Grid item key={user.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
+                  <CardHeader
+                    avatar={
+                      <Avatar className={classes.avatar}>{user.name[0]}</Avatar>
+                    }
+                    action={
+                      <IconButton aria-label="settings">
+                        <MoreVertIcon />
+                      </IconButton>
+                    }
+                    title={user.name}
+                    subheader={user.email}
+                  />
                   <CardMedia
                     className={classes.cardMedia}
                     image="https://source.unsplash.com/random"
                     title="Image title"
                   />
                   <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
                     <Typography>
-                      This is a media card. You can use this section to describe the content.
+                      Main ek finance expert hoon. Mujhe sab aata hai.
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -107,11 +140,8 @@ export default function Home() {
       </main>
       {/* Footer */}
       <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
         <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-          Something here to give the footer a purpose!
+          Copyright FinCloud 2021
         </Typography>
       </footer>
       {/* End footer */}

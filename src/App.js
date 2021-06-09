@@ -5,6 +5,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 import { useState } from 'react';
+import { blue, indigo } from '@material-ui/core/colors';
 
 function App() {
   const [darkState, setDarkState] = useState(false);
@@ -12,11 +13,16 @@ function App() {
   const theme = createMuiTheme({
     palette: {
       type: palletType,
+      primary: blue,
+      secondary: indigo,
     },
   });
+  function toggleTheme() {
+    setDarkState(!darkState)
+  }
   return (
     <ThemeProvider theme={theme}>
-      <Home />
+      <Home toggleTheme={toggleTheme} />
     </ThemeProvider>
 
   );
