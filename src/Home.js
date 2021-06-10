@@ -87,7 +87,7 @@ export default function Home(props) {
   };
 
   const createUser = (name, email) => {
-    axios.post('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users', {
+    axios.post('http://ec2-65-1-131-13.ap-south-1.compute.amazonaws.com:3000/users', {
       name,
       email
     })
@@ -100,7 +100,7 @@ export default function Home(props) {
       });
   }
   const deleteUser = (userObj) => {
-    axios.delete('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users', {data: userObj})
+    axios.delete('http://ec2-65-1-131-13.ap-south-1.compute.amazonaws.com:3000/users', {data: userObj})
       .then(function (response) {
         console.log(response);
         getUsers();
@@ -122,7 +122,7 @@ export default function Home(props) {
   }
 
   const getUsers = () => {
-    axios.get('http://ec2-13-233-124-10.ap-south-1.compute.amazonaws.com:3000/users')
+    axios.get('http://ec2-65-1-131-13.ap-south-1.compute.amazonaws.com:3000/users')
       .then(function (response) {
         // handle success
         setUsers(response.data)
